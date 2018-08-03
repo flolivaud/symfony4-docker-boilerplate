@@ -1,0 +1,100 @@
+version: '3'
+
+services:
+    composer:
+        build: config/docker/php
+        environment:
+            COMPOSER_CACHE_DIR: /scripts/var/cache/composer
+            COMPOSER_MEMORY_LIMIT: -1
+        volumes:
+            - ./:/scripts
+        working_dir: /scripts
+        user: '1000'
+        env_file:
+            - .env
+        networks:
+            - default
+        entrypoint: ["/usr/local/bin/composer"]
+
+    web:
+        image: nginx:alpine
+        labels:
+            traefik.backend: "web_sf4"
+            traefik.port: "80"
+            traefik.docker.network: "reverse-proxy"
+            traefik.enable: "true"
+            traefik.frontend.rule: "Host:sf4.127.0.0.1.nip.io"
+        volumes:
+            - ./config/docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+            - ./config/docker/nginx/conf.d/:/etc/nginx/conf.d/:ro
+            - ./:/scripts:ro
+        networks:
+            - reverse-proxy
+            - default
+        depends_on:
+            - app
+
+    app:
+        build: config/docker/php
+        user: '1000'
+        working_dir: /scripts
+        volumes:
+            - ./:/scripts:rw
+            - ./config/docker/php/local.conf.d/dev.ini:/usr/local/etc/php/conf.d/dev.ini
+        env_file:
+          - .env
+        depends_on:
+            - mysqlserver
+        networks:
+            - default
+
+    console:
+        build: config/docker/php
+        user: '1000'
+        working_dir: /scripts
+        volumes:
+            - ./:/scripts/:rw
+        entrypoint: 'php bin/console'
+        env_file:
+          - .env
+        depends_on:
+            - mysqlserver
+        networks:
+            - default
+
+    mysqlserver:
+        image: mariadb:10.3.7
+        environment:
+            MYSQL_USER: sf4
+            MYSQL_PASSWORD: password
+            MYSQL_DATABASE: sf4
+            MYSQL_ROOT_PASSWORD: passwordroot
+        volumes:
+            - mysqldatasf4:/var/lib/mysql
+        networks:
+            - reverse-proxy
+            - default
+
+
+    mailserver:
+        image: mailhog/mailhog
+        labels:
+            traefik.backend: "mailhog_coworkees"
+            traefik.port: "8025"
+            traefik.docker.network: "reverse-proxy"
+            traefik.enable: "true"
+            traefik.frontend.rule: "Host:mail.sf4.127.0.0.1.nip.io"
+        networks:
+            - reverse-proxy
+            - default
+
+networks:
+    reverse-proxy:
+        external:
+            name: reverse-proxy
+
+
+volumes:
+    mysqldatasf4:
+        external:
+            name: mysqldatasf4

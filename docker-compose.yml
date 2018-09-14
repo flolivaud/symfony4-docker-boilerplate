@@ -44,7 +44,7 @@ services:
         env_file:
           - .env
         depends_on:
-            - mysqlserver
+            - postgreserver
         networks:
             - default
 
@@ -58,22 +58,36 @@ services:
         env_file:
           - .env
         depends_on:
-            - mysqlserver
+            - postgreserver
         networks:
             - default
 
-    mysqlserver:
-        image: mariadb:10.3.7
+    postgreserver:
+        image: postgres:10.5-alpine
         environment:
-            MYSQL_USER: sf4
-            MYSQL_PASSWORD: password
-            MYSQL_DATABASE: sf4
-            MYSQL_ROOT_PASSWORD: passwordroot
+            POSTGRES_USER: sf4
+            POSTGRES_PASSWORD: password
+            POSTGRES_DB: sf4
+            POSTGRES_ROOT_PASSWORD: passwordroot
         volumes:
-            - mysqldatasf4:/var/lib/mysql
+            - postgresdata:/var/lib/postgresql/data
         networks:
             - reverse-proxy
             - default
+
+    adminer:
+        image: adminer:standalone
+        labels:
+            traefik.backend: "adminer_sf4"
+            traefik.port: "8080"
+            traefik.docker.network: "reverse-proxy"
+            traefik.enable: "true"
+            traefik.frontend.rule: "Host:adminer.sf4.127.0.0.1.nip.io"
+        networks:
+            - reverse-proxy
+            - default
+        depends_on:
+            - postgreserver
 
 
     mailserver:
@@ -95,6 +109,6 @@ networks:
 
 
 volumes:
-    mysqldatasf4:
+    postgresdata:
         external:
-            name: mysqldatasf4
+            name: postgresdata

@@ -1,7 +1,7 @@
 FROM php:7.2-fpm-alpine
 
-RUN apk add --no-cache icu-dev openssl-dev libpng libpng-dev libjpeg-turbo \
-    libjpeg-turbo-dev python python-dev py-pip py-mysqldb imagemagick imagemagick-dev
+RUN apk add --no-cache --update icu-dev libpng libpng-dev libjpeg-turbo \
+    libjpeg-turbo-dev imagemagick imagemagick-dev postgresql-dev
 
 RUN NPROC=$(grep -c ^processor /proc/cpuinfo 2>/dev/null || 1) && \
     NJOBS=$((NPROC*4)) && \
@@ -9,8 +9,7 @@ RUN NPROC=$(grep -c ^processor /proc/cpuinfo 2>/dev/null || 1) && \
             --with-gd \
             --with-png-dir=/usr/include/ \
             --with-jpeg-dir=/usr/include/ && \
-    docker-php-ext-install -j${NJOBS} pdo pdo_mysql mbstring intl pcntl gd exif bcmath opcache zip && \
-    pip install MySQL-python socketIO-client-nexus
+    docker-php-ext-install -j${NJOBS} pgsql pdo pdo_mysql pdo_pgsql mbstring intl pcntl gd exif bcmath opcache zip
 
 RUN docker-php-source extract && \
     apk add --no-cache --virtual .phpize-deps-configure $PHPIZE_DEPS autoconf g++ libtool make && \

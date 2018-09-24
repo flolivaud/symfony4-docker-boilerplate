@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
@@ -10,8 +11,6 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class User implements UserInterface
 {
-    use Authoring;
-
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -32,7 +31,38 @@ class User implements UserInterface
     /**
      * @ORM\Column(type="boolean")
      */
-    private $isActive;
+    private $isActive = true;
+    /**
+     * @var \DateTimeImmutable
+     *
+     * @Gedmo\Timestampable(on="create")
+     * @ORM\Column(name="created_at", type="datetime_immutable", nullable=false)
+     */
+    protected $createdAt;
+
+    /**
+     * @var \DateTimeImmutable
+     *
+     * @Gedmo\Timestampable(on="update")
+     * @ORM\Column(name="modified_at", type="datetime_immutable", nullable=false)
+     */
+    protected $modifiedAt;
+
+    /**
+     * @ORM\Column(type="array")
+     */
+    private $roles;
+
+    public function getCreatedAt(): \DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function getModifiedAt(): \DateTimeImmutable
+    {
+        return $this->modifiedAt;
+    }
+
 
     public function getId()
     {
@@ -77,7 +107,7 @@ class User implements UserInterface
 
     public function getRoles(): array
     {
-        return ['ROLE_ADMIN'];
+        return $this->roles;
     }
 
     public function getSalt(): ?string
@@ -93,5 +123,12 @@ class User implements UserInterface
     public function eraseCredentials(): void
     {
 //        return null;
+    }
+
+    public function setRoles(array $roles): self
+    {
+        $this->roles = $roles;
+
+        return $this;
     }
 }

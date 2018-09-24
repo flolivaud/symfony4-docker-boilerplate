@@ -93,7 +93,7 @@ services:
     mailserver:
         image: mailhog/mailhog
         labels:
-            traefik.backend: "mailhog_coworkees"
+            traefik.backend: "mailhog"
             traefik.port: "8025"
             traefik.docker.network: "reverse-proxy"
             traefik.enable: "true"
@@ -114,6 +114,21 @@ services:
         env_file:
             - .env
             - .env.test
+
+    yarn:
+        image: node:10-alpine
+        working_dir: /scripts
+        volumes:
+            - ./:/scripts
+        entrypoint:
+            - yarn
+
+    webpack:
+        image: node:10-alpine
+        working_dir: /scripts
+        volumes:
+            - ./:/scripts
+        entrypoint: yarn encore dev --watch
 
     phpcs:
         build: config/docker/php

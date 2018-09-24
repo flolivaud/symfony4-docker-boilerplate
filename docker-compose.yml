@@ -44,7 +44,7 @@ services:
         env_file:
           - .env
         depends_on:
-            - postgreserver
+            - databaseserver
         networks:
             - default
 
@@ -58,19 +58,19 @@ services:
         env_file:
           - .env
         depends_on:
-            - postgreserver
+            - databaseserver
         networks:
             - default
 
-    postgreserver:
-        image: postgres:10.5-alpine
+    databaseserver:
+        image: mariadb:10.3.8
         environment:
-            POSTGRES_USER: sf4
-            POSTGRES_PASSWORD: password
-            POSTGRES_DB: sf4
-            POSTGRES_ROOT_PASSWORD: passwordroot
+            MYSQL_USER: user
+            MYSQL_PASSWORD: password
+            MYSQL_DATABASE: databasesf4
+            MYSQL_ROOT_PASSWORD: passwordroot
         volumes:
-            - postgresdata:/var/lib/postgresql/data
+            - databaseserverdata:/var/lib/mysql
         networks:
             - reverse-proxy
             - default
@@ -87,7 +87,7 @@ services:
             - reverse-proxy
             - default
         depends_on:
-            - postgreserver
+            - databaseserver
 
 
     mailserver:
@@ -109,6 +109,6 @@ networks:
 
 
 volumes:
-    postgresdata:
+    databaseserverdata:
         external:
-            name: postgresdata
+            name: databaseserverdata

@@ -8,9 +8,14 @@ parameters:
 doctrine:
     dbal:
         # configure these for your database server
-        driver: 'pdo_pgsql'
-        server_version: '10.5'
-        charset: utf8
+        driver: 'pdo_mysql'
+        server_version: 'mariadb-10.3.8'
+        charset: utf8mb4
+        mapping_types:
+            enum: string
+        default_table_options:
+            charset: utf8mb4
+            collate: utf8mb4_unicode_ci
         url: '%env(resolve:DATABASE_URL)%'
     orm:
         auto_generate_proxy_classes: '%kernel.debug%'

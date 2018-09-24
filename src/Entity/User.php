@@ -7,10 +7,11 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
- * @ORM\Table(schema="user", name="`user`")
  */
 class User implements UserInterface
 {
+    use Authoring;
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()

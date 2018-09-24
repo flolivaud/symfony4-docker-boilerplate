@@ -17,6 +17,9 @@
     "behat/transliterator": {
         "version": "v1.2.0"
     },
+    "consistence/coding-standard": {
+        "version": "3.5"
+    },
     "container-interop/container-interop": {
         "version": "1.2.0"
     },
@@ -147,6 +150,18 @@
             "branch": "master",
             "version": "5.2",
             "ref": "fb7e19da7f013d0d422fa9bce16f5c510e27609b"
+        }
+    },
+    "slevomat/coding-standard": {
+        "version": "4.8.0"
+    },
+    "squizlabs/php_codesniffer": {
+        "version": "3.0",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "master",
+            "version": "3.0",
+            "ref": "0dc9cceda799fd3a08b96987e176a261028a3709"
         }
     },
     "stof/doctrine-extensions-bundle": {

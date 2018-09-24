@@ -115,6 +115,14 @@ services:
             - .env
             - .env.test
 
+    phpcs:
+        build: config/docker/php
+        volumes:
+            - ./:/scripts
+        working_dir: /scripts
+        entrypoint: ./vendor/bin/phpcs --colors -d memory_limit=-1 --extensions=php --standard=config/phpcs/ruleset.xml -sp
+        command: --colors src/ features/
+
     databaseservertest:
         image: mariadb:10.3.8
         environment:

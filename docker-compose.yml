@@ -82,7 +82,7 @@ services:
             traefik.port: "8080"
             traefik.docker.network: "reverse-proxy"
             traefik.enable: "true"
-            traefik.frontend.rule: "Host:adminer.sf4.127.0.0.1.nip.io"
+            traefik.frontend.rule: "Host:adminer.127.0.0.1.nip.io"
         networks:
             - reverse-proxy
             - default
@@ -97,7 +97,7 @@ services:
             traefik.port: "8025"
             traefik.docker.network: "reverse-proxy"
             traefik.enable: "true"
-            traefik.frontend.rule: "Host:mail.sf4.127.0.0.1.nip.io"
+            traefik.frontend.rule: "Host:mail.127.0.0.1.nip.io"
         networks:
             - reverse-proxy
             - default

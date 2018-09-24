@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+    traefik:
+        image: traefik:latest
+        restart: always
+        ports:
+          - 80:80
+        command: |
+          - --entrypoints="Name:http Address::80 Compress:true"
+        networks:
+          - reverse-proxy
+        volumes:
+          - /var/run/docker.sock:/var/run/docker.sock
+          - ./config/docker/traefik/traefik.toml:/etc/traefik/traefik.toml
+        labels:
+          traefik.backend: "traefik"
+          traefik.port: "8080"
+          traefik.docker.network: "reverse-proxy"
+          traefik.enable: "true"
+          traefik.frontend.rule: "Host:traefik.127.0.0.1.nip.io"
+
+networks:
+    reverse-proxy:
+        external:
+            name: reverse-proxy
